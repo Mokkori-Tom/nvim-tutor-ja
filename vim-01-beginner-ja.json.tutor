@@ -1015,4 +1015,4 @@ Bram Moolenaar が Vim 向けに手直ししました。
 Felipe Morales が vim-tutor-mode 向けに手直ししました。
 Rory Nesbitt が Neovim 向けに手直ししました。
 
-// vim: nowrap
+// vim: wrap
