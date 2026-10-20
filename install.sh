@@ -1,11 +1,11 @@
 #!/bin/sh
-# Neovim 日本語チュートリアル (vim-01-beginner-ja) の配置スクリプト
+# Neovim 日本語チュートリアル (vim-01-beginner-ja, vim-02-beginner-ja) の配置スクリプト
 # 使い方:
 #   curl -fsSL https://raw.githubusercontent.com/Mokkori-Tom/nvim-tutor-ja/main/install.sh | sh
 #   sh install.sh                        … 横にファイルがあればそれを使い、無ければ GitHub から取得
 #   BASE_URL=https://... sh install.sh   … BASE_URL/<ファイル名> から取得
 set -eu
-NAME=vim-01-beginner-ja.tutor
+NAMES="vim-01-beginner-ja vim-02-beginner-ja"
 
 command -v nvim >/dev/null 2>&1 || { echo "nvim が見つかりません" >&2; exit 1; }
 
@@ -33,11 +33,13 @@ fetch() {  # $1=元のファイル名 $2=配置するファイル名
   fi
 }
 
-fetch "vim-01-beginner-ja.$FMT.tutor" "$NAME"
-if [ "$FMT" = json ]; then
-  fetch "$NAME.json" "$NAME.json"
-else
-  rm -f "$DEST/$NAME.json"   # inline 形式では不要
-fi
+for n in $NAMES; do
+  fetch "$n.$FMT.tutor" "$n.tutor"
+  if [ "$FMT" = json ]; then
+    fetch "$n.tutor.json" "$n.tutor.json"
+  else
+    rm -f "$DEST/$n.tutor.json"   # inline 形式では不要
+  fi
+done
 ls -l "$DEST"
-echo "完了。nvim を起動して  :Tutor vim-01-beginner-ja  を実行してください。"
+echo "完了。nvim を起動して  :Tutor vim-01-beginner-ja  を実行してください (第2章は :Tutor vim-02-beginner-ja)。"

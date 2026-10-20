@@ -1,0 +1,288 @@
+# Neovim チュートリアルへようこそ
+
+# 第2章
+
+  ここから先は上級者向けです。vim を初めて使う人で、入門の章から
+  始めたい場合は、Vim エディタのコマンド入力欄で次のように
+  打ってください
+~~~ cmd
+        :Tutor vim-01-beginner-ja
+~~~
+  または、このリンクから [第1章](@tutor:vim-01-beginner-ja) を開いてください。
+
+  この章にかかる時間は、試してみる時間にもよりますが、
+  だいたい 8〜10 分です。
+
+
+# レッスン 2.1.1: テキストオブジェクトを使いこなす
+
+   ** テキストオブジェクト（単語・かっこの中・段落などのまとまり）を使うと、範囲をぴったり指定して操作できます **
+
+  1. 単語の操作を練習しましょう：
+     - 下の行のどれかの単語にカーソルを置きます
+     - `diw`{normal} と打つと、単語の「内側」（前後の空白を含まない単語）を削除します
+     - `daw`{normal} と打つと、「単語まるごと」（後ろの空白も含む）を削除します
+     - ほかのオペレーターでも試しましょう: `ciw`{normal}（書き換え）、`yiw`{normal}（コピー）、
+        `gqiw`{normal}（整形）
+
+Practice on: "Vim's", (text_object), and 'powerful' words here.
+
+  2. かっこの中身を操作しましょう：
+     - 下の行の () {} [] <> のどれかの内側にカーソルを置きます
+     - `di(`{normal} または `dib`{normal} と打つと、かっこの内側を削除します
+     - `da(`{normal} または `dab`{normal} と打つと、かっこごと削除します
+     - 引用符なら `i"`{normal}/`a"`{normal}、HTML/XML のタグなら `it`{normal}/`at`{normal}  で同じことを試しましょう
+
+Test cases: {curly}, [square], <angle>, and "quoted" items.
+
+  3. 段落と文の操作：
+     - `dip`{normal} で段落の内側を削除します（カーソルは段落のどこにあってもかまいません）
+     - `vap`{normal} で段落全体をビジュアルモードで選びます
+     - `das`{normal} で1つの文を削除してみましょう（. ! ? で区切られた範囲が対象です）
+
+  4. 組み合わせの応用：
+     - `ciwnew<ESC>`{normal} - 今の単語を "new" に書き換えます
+     - `ciw"<CTRL-R>-"<ESC>`{normal} - 今の単語を引用符で囲みます
+     - `gUit`{normal}        - HTML タグの中身を大文字にします
+     - `va"p`{normal}        - 引用符の中を選び、貼り付けで上書きします
+
+Final exercise: (Modify "this" text) by [applying {various} operations]<
+
+
+# レッスン 2.1.2: 名前付きレジスタ
+
+** ヤンク（コピー）した2つの単語を同時に保管し、あとで貼り付けます **
+
+  1. 下の ✓ の付いた行へカーソルを動かします
+
+  2. 'Edward' という単語のどこかへ動き、`"ayiw`{normal} と打ちます
+
+**覚え方**: *レジスタ(")（保管場所）の a に、(y)ank＝コピー (i)nner＝内側の (w)ord＝単語*
+
+  3. 先へ進んで 'cookie' という単語へ動き（`fk`{normal}、`3fc`{normal}、
+     `$2b`{normal}、`/co`{normal} `<ENTER>`{normal} のどれでも）、`"byiw`{normal} と打ちます
+
+  4. 'Vince' という単語のどこかへ動き、`ciw<CTRL-R>a<ESC>`{normal} と打ちます
+
+**覚え方**: *(c)hange＝書き換え (i)nner＝内側の (w)ord＝単語を、a という名前の (r)egister＝レジスタの中身で*
+
+  5. 'cake' という単語のどこかへ動き、`ciw<CTRL-R>b<ESC>`{normal} と打ちます
+
+a) Edward will henceforth be in charge of the cookie rations
+b) In this capacity, Vince will have sole cake discretionary powers
+
+NOTE: 削除したものもレジスタに入れられます。たとえば `"sdiw`{normal} と打つと、
+      カーソルの下の単語を削除して s というレジスタに入れます。
+
+参考:      [レジスタ](registers)
+           [名前付きレジスタ](quotea)
+           [テキストオブジェクト](text-objects)
+           [CTRL-R](i_CTRL-R)
+
+
+# レッスン 2.1.3: 式レジスタ
+
+** 計算の結果を、その場で書き込みます **
+
+  1. 下の ✗ の付いた行へカーソルを動かします
+
+  2. 行の中の数字のどこかへ動きます
+
+  3. `ciw<CTRL-R>=`{normal}60\*60\*24 `<ENTER>`{normal} と打ちます
+
+  4. 次の行で挿入モードに入り、今日の日付を書き込みます。打つのは
+     `<CTRL-R>=`{normal}`system('date')`{vim} `<ENTER>`{normal} です
+
+NOTE: system を使う呼び出しは、OS によって違います。たとえば Windows では
+      `system('date /t')`{vim}   または  `:r!date /t`{vim} を使います
+
+I have forgotten the exact number of seconds in a day, is it 84600?
+Today's date is: 
+
+NOTE: `:pu=`{normal}`system('date')`{vim} でも同じことができます。
+      もっと少ないキーで済ませるなら `:r!date`{vim} です
+
+参考:      [式レジスタ](quote=)
+
+
+# レッスン 2.1.4: 番号付きレジスタ
+
+** `yy`{normal} と `dd`{normal} を押して、レジスタがどう変わるか見てみましょう **
+
+  1. 下の ✓ の付いた行へカーソルを動かします
+
+  2. "0." で始まる行をヤンクし、`:reg`{vim} `<ENTER>`{normal} でレジスタの中身を見ます
+
+  3. 0 の行を `"cdd`{normal} で削除し、もう一度レジスタを見ます
+     （0 の行はどこに入っていると思いますか？）
+
+  4. 続く行を1行ずつ削除し、そのたびに `:reg`{vim} で確かめます
+
+NOTE: 新しく行まるごとを削除するたびに、前に削除した行が
+      一覧の下へずれていくのがわかるはずです
+
+  5. 次のレジスタを c、7、4、8、2 の順に (p)aste＝貼り付けします。たとえば `"7p`{normal}
+
+0. This
+9. wobble
+8. secret
+7. is
+6. on
+5. axis
+4. a
+3. war
+2. message
+1. tribute
+
+
+NOTE: 行まるごとの削除（`dd`{normal}）は、行まるごとのヤンクや、もっと
+      狭い範囲の削除よりも、番号付きレジスタにずっと長く
+      残ります
+
+参考:      [番号付きレジスタ](quote0)
+
+
+# レッスン 2.1.5: 特別なレジスタ
+
+ ** システムのクリップボードと、ブラックホールレジスタを使いこなします **
+
+ Note: Linux でクリップボードを使うには、使っている画面の仕組みに合った
+       クリップボードの連携機能が動いている必要があります。`:checkhealth vim.provider`{vim}
+       と `:echo has('clipboard_working')`{vim} で確かめられます
+
+  1. クリップボードのレジスタ `+`{normal} と `*`{normal}：
+     - `"+y`{normal} - システムのクリップボードへヤンクします（たとえば今の行なら `"+yy`{normal}）
+     - `"+p`{normal} - システムのクリップボードから貼り付けます
+     - `"*`{normal} は X11 の「選択した文字」（中ボタンで貼り付けるもの）、`"+`{normal} はクリップボードです
+
+Try: "+yy then paste into another application with Ctrl-V or Cmd+V
+
+  2. ブラックホールレジスタ `_`{normal} は、入れた文字を捨てます：
+     - `"_daw`{normal} - どのレジスタにも残さずに単語を削除します
+     - いつものレジスタ `"`{normal} の中身を上書きしたくないときに便利です
+     - これは前のレッスンで紹介した「単語まるごと（aw）」のテキストオブジェクトを
+       使っています
+     - `"_dd`{normal}  - 残さずに行を削除します
+     - `"_dap`{normal} - 残さずに段落を削除します
+     - 回数と組み合わせられます: `3"_dw`{normal}
+
+Practice: "_diw on any word to delete it without affecting yank history
+
+  3. ビジュアル選択と組み合わせる：
+     - V で文字を選んでから `"+y`{normal}
+     - 挿入モードでクリップボードから貼り付けるには: `<CTRL-R>+`{normal}
+     - ほかのアプリを開いて、クリップボードから貼り付けてみましょう
+
+  4. 覚えておくこと：
+     - クリップボードのレジスタは、別々に起動した Vim のあいだでも使えます
+     - クリップボードのレジスタは、いつも使えるとは限りません
+     - ブラックホールを使うと、うっかりレジスタを上書きするのを防げます
+     - いつものヤンク・貼り付けには、これまでどおり `"`{normal} レジスタが使えます
+     - 名前付きレジスタ（a〜z）は、起動した Vim ごとに別々です
+
+  5. クリップボードが使えないとき：
+     - `:echo has('clipboard_working')`{vim} で使えるか確かめます
+     - 1 なら使えます、0 なら使えません
+     - Linux では xsel、xclip、wl-clipboard のどれかが必要なことがあります
+       （`:checkhealth vim.provider`{vim} の結果を見てください）
+
+
+# レッスン 2.1.6: マークの便利さ
+
+** 行数の計算をしないで済ませる **
+
+NOTE: プログラムを書いていると、大きなかたまりのコードを動かしたいことがよくあります。
+      次のやり方を使うと、行番号の計算をしないで済みます。計算が要るのは、たとえば
+      `"a147d`{normal} や `:945,1091d a`{vim} のような操作や、もっと面倒な、先に
+      `i<CTRL-R>=`{normal}1091-945 `<ENTER>`{normal} で行数を求めるやり方です
+
+  1. 下の ✓ の付いた行へカーソルを動かします
+
+  2. 関数の最初の行へ動き、`ma`{normal} でマーク（しおり）を付けます
+
+NOTE: 行の中のどの位置かは関係ありません！
+
+  3. 行の末尾へ動き、そこからコードのかたまりの終わりへ動きます。
+     打つのは `$%`{normal} です
+
+  4. `"ad'a`{normal} で、そのかたまりを削除して a というレジスタに入れます
+
+**覚え方**: *レジスタ(") の a に、カーソルから mark(') a のある
+          行までを (d)elete＝削除して入れる*
+
+  5. `"ap`{normal} で、そのかたまりを BBB と CCC のあいだに貼り付けます
+
+NOTE: すらすらできるように、この操作 `ma$%"ad'a`{normal} を何回も練習しましょう
+
+~~~ cmd
+AAA
+function itGotRealBigRealFast() {
+  if ( somethingIsTrue ) {
+    doIt()
+  }
+  // the taxonomy of our function has changed and it
+  // no longer makes alphabetical sense in its current position
+
+  // imagine hundreds of lines of code
+
+  // naively you could navigate to the start and end and record or
+  // remember each line number
+}
+BBB
+CCC
+~~~
+
+NOTE: マークとレジスタは名前が別々なので、レジスタ a と
+      マーク a はまったく関係ありません。ただし、レジスタとマクロ（操作の記録）は
+      同じ名前を使います。
+
+参考:      [マーク](marks)
+           [マークへの移動](mark-motions)  (' と \` の違い)
+
+
+# レッスン 2.1 のまとめ
+
+  1. テキストオブジェクトを使うと、範囲をぴったり指定して編集できます：
+     - `iw`{normal}/`aw`{normal} - 単語の内側／まるごと
+     - `i[`{normal}/`a[`{normal} - かっこの内側／かっこごと
+     - `i"`{normal}/`a"`{normal} - 引用符の内側／引用符ごと
+     - `it`{normal}/`at`{normal} - タグの内側／タグごと
+     - `ip`{normal}/`ap`{normal} - 段落の内側／まるごと
+     - `is`{normal}/`as`{normal} - 文の内側／まるごと
+
+  2. 全部で 26 個のレジスタ（a〜z）に文字を入れたり（ヤンク・削除）、
+     取り出したり（貼り付け）できます
+  3. 単語のどこにいても、単語まるごとをヤンクする: `yiw`{normal}
+  4. 単語のどこにいても、単語まるごとを書き換える: `ciw`{normal}
+  5. 挿入モードで、レジスタの中身を直接書き込む: `<CTRL-R>a`{normal}
+
+  6. かんたんな計算の結果を書き込む：
+     挿入モードで `<CTRL-R>=`{normal}60\*60`<ENTER>`{normal}
+  7. システムのコマンドの結果を書き込む：
+     挿入モードで `<CTRL-R>=`{normal}`system('ls -1')`{vim}`<ENTER>`{normal}
+
+  8. レジスタの中身は `:reg`{vim} で見られます
+  9. 行まるごとの削除 `dd`{normal} が最後にどこへ行くかを覚えましょう。
+     番号付きレジスタの 1 から 9 へ順に下がっていきます。行まるごとの削除は
+     ほかのどの操作よりも長く番号付きレジスタに残る、ということを
+     覚えておきましょう
+ 10. ヤンクしたものが番号付きレジスタのどこへ行くか、そしてどれだけ
+     すぐに消えるかを覚えましょう
+
+ 11. ノーマルモードで `m[a-zA-Z0-9]`{normal} と打つとマークを付けられます
+ 12. `'`{normal} でマークのある行へ動きます
+
+ 13. 特別なレジスタ：
+     - `"+`{normal}/`"*`{normal} - システムのクリップボード（OS によって違います）
+     - `"_`{normal}    - ブラックホール（削除・ヤンクした文字を捨てます）
+     - `"=`{normal}    - 式レジスタ
+     - `"-`{normal}    - 小さな削除（1行未満）のレジスタ
+
+
+# おわりに
+
+  これで Vim チュートリアルの第2章はおしまいです。この章はまだ作りかけです。
+
+  この章は Paul D. Parker と Christian Brabandt が書きました。
+
+  Restorer が vim-tutor-mode 向けに手直ししました。
